@@ -70,21 +70,3 @@ for a in range(len(Files)):
         #run matlab code to apply curve fitting
         ret = eng.SmoothCoords(filename,mlX,mlY)
         print(ret)
-        
-    #new script will take the coordinates from the txt files and paste into javafoil
-    
-    #then handle the output data and place that into the same dataframe
-    
-    #the final dataframe for each airfoil should have the following:
-        
-        #200 x and y coordinates
-        
-        #30 reynolds number tests with CL, CD, and CM at several angles of attack
-        
-    #when the full dictionary has been completed we can begin training the model
-    
-    
-    
-# to install the stupid matlab engine install the new version of spyder and reinstall python 
-
-# instead it was as easy as running the command within anaconda prompt
