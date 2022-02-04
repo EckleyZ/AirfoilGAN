@@ -20,9 +20,8 @@ DataFiles = os.listdir(Dir+'\\OutputPolars\\Complete')
 Dataset = np.zeros([1584,121,201,10])
 
 for F in range(len(Airfoils)):
-
-#just test the first file
-#F = 0
+    
+    # read data from text file
     File = open(Dir+'\OutputPolars\\Complete\\'+DataFiles[F])
     FileLines = File.readlines()
     File.close()
@@ -39,16 +38,16 @@ for F in range(len(Airfoils)):
         Chunk = FileLines[start:stop]
         for a in range(len(Chunk)):
             Line = Chunk[a].split()
-            Dataset[F][r][a][0] = Line[1]
-            Dataset[F][r][a][1] = Line[2]
-            Dataset[F][r][a][2] = Line[3]
-            Dataset[F][r][a][3] = Line[4]
-            Dataset[F][r][a][4] = Line[5]
-            Dataset[F][r][a][5] = Line[6]
-            Dataset[F][r][a][6] = Line[7]
-            Dataset[F][r][a][7] = Line[8]
-            Dataset[F][r][a][8] = Line[9]
-            Dataset[F][r][a][9] = Line[10]
+            Dataset[F][r][a][0] = Line[1]   #CL
+            Dataset[F][r][a][1] = Line[2]   #CD
+            Dataset[F][r][a][2] = Line[3]   #CM0.25
+            Dataset[F][r][a][3] = Line[4]   #TU
+            Dataset[F][r][a][4] = Line[5]   #TL
+            Dataset[F][r][a][5] = Line[6]   #SU
+            Dataset[F][r][a][6] = Line[7]   #SL
+            Dataset[F][r][a][7] = Line[8]   #LD
+            Dataset[F][r][a][8] = Line[9]   #AC
+            Dataset[F][r][a][9] = Line[10]  #CP
     
     print('{:4.0f}\\{}\t\t Data imported for {}'.format(F+1,len(Airfoils),Airfoils[F]))
         
