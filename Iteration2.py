@@ -32,10 +32,10 @@ from playsound import playsound
 
 def define_generator(latent_dim):
     model = Sequential()
-    # foundation for 7x7 image
     N = 128
     
-    n_nodes = N * 121 * 201 * 10 # N * Re tests * AOA tests * data type
+    n_nodes = N * 121 * 201 * 10 # N * Re tests * AOA tests * data type (This amount of data is way too much)
+    #initial layer to handle data
     model.add(Dense(n_nodes,input_dim=latent_dim))
     model.add(Elu(alpha=1))
     model.add(BatchNormalization(axis=-1,momentum=0.99, epsilon=0.001))
@@ -82,7 +82,7 @@ DataNum = np.size(Data)
 Data = Data.reshape(1,DataNum)
 noise = tf.convert_to_tensor(Data)
 G = define_generator(DataNum)
-Coords = G(noise)
+Coords = G(noise,training=False)
 arrayCoords = Coords.numpy()
 x = arrayCoords[:,0,:].reshape([200,1])
 y = arrayCoords[:,1,:].reshape([200,1])
@@ -177,7 +177,7 @@ def generate_fake_samples(g_model, dataset, fakeSet, dataNum):
     return X, y
 
 #%% Training method GAN
-def train(g_model, d_model, gan_model, CoordinateData, PerformanceData, dataNum, n_epochs=25, n_batch=48):
+def train(g_model, d_model, gan_model, CoordinateData, PerformanceData, dataNum, n_epochs=25, n_batch=16):
     bat_per_epo = int(CoordinateData.shape[0]/n_batch)
     #manually enumerate epochs
     for i in range(n_epochs):
