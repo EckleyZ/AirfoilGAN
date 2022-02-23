@@ -21,6 +21,7 @@ from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.layers import Conv2DTranspose
 from tensorflow.keras.layers import LeakyReLU
 from tensorflow.keras.layers import ELU
+from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.layers import Dropout
 import matplotlib.pyplot as plt
 from playsound import playsound
@@ -37,6 +38,7 @@ def define_generator(latent_dim):
     n_nodes = N * 121 * 201 * 10 # N * Re tests * AOA tests * data type
     model.add(Dense(n_nodes,input_dim=latent_dim))
     model.add(Elu(alpha=1))
+    model.add(BatchNormalization(axis=-1,momentum=0.99, epsilon=0.001))
     model.reshape((121,201,10,N))
     # downsample to 40x200x1
     model.add(Conv3D(N,(4, 2, 10),(3, 1, 1), padding='valid'))
