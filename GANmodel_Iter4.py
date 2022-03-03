@@ -17,12 +17,9 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.layers import Reshape
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Conv2D
-#from tensorflow.keras.layers import Conv3D
 from tensorflow.keras.layers import Conv2DTranspose
 from tensorflow.keras.layers import LeakyReLU
-#from tensorflow.keras.layers import ELU
 from tensorflow.keras.layers import Dropout
-#from tensorflow.keras.layers import BatchNormalization
 from tensorflow_addons.layers import SpectralNormalization
 import matplotlib.pyplot as plt
 
@@ -57,8 +54,6 @@ def define_generator(latent_dim):
     return model
 
 #%% Load the dataset
-#P_data = np.load("D:\\Non Windows Stuff\\HPC Research\\Airfoil_Performance_Data.npy")
-#P_data = P_data[:, 0:120, :, 0:3]
 P_data = np.load("D:\\Non Windows Stuff\\HPC Research\\Encoded_Airfoil_Performance_Data.npy")
 C_data = np.load("D:\\Non Windows Stuff\\HPC Research\\Airfoil_Coordinate_Data.npy")
 C_data[:,1,:] = C_data[:,1,:]+1
@@ -91,7 +86,6 @@ def define_discriminator(in_shape=(2,200,1)):
     model.add(Flatten())
     model.add(Dense(1, activation='sigmoid'))
     # compile model
-#    opt = Adam(learning_rate=0.0002, beta_1=0.5)
     opt = Adam(learning_rate=0.0001, beta_1=0.5)
     model.compile(loss='binary_crossentropy', optimizer=opt, metrics=['accuracy'])
     
@@ -243,7 +237,7 @@ def train(g_model, d_model, gan_model, C_data, P_data, dataNum, n_epochs=1000, n
 #%% Train the model
 AirfoilNum = C_data.shape[0]
 batchSz = 16
-D = define_discriminator()                          # create the disriminator
+D = define_discriminator()                          # create the discriminator
 G = define_generator(DataNum)                       # create the generator
 GAN = define_gan(G, D)                              # create the gan
 train(G, D, GAN, C_data, P_data, DataNum)           # train model
@@ -274,14 +268,3 @@ for i in range(predictions.shape[0]):
 GAN_Name = 'Models\\GANmodel_recent\\Model'    # Change name depending on model
 
 G.save(GAN_Name)
-      
-    
-#%% Load Model and predict some airfoils
-'''GAN_Name = 'Models\\Enter Name Here.pkl'
-
-with open(GAN_Name, 'wb') as file:  
-    pickle.dump(G, file)
-    
-# Set up prediction here
-testCase = tf.random.noise([1,DataNum])
-Outputs = G.predictt(testCase)'''
