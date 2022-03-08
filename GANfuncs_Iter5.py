@@ -3,6 +3,11 @@
 Created on Sat Mar  5 15:35:53 2022
 
 @author: Admin
+
+Description:
+New file to hold all of the functions for the GAN
+Makes main file more easily readable
+
 """
 
 import numpy as np
