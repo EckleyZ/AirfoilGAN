@@ -3,7 +3,20 @@
 Created on Tue Feb  8 11:43:23 2022
 
 @author: Zachary Eckley
+
+Changes from iteration 3
+ - Generator uses the encoded data rather than the pure performance data
+ - Saves Generator weights after every 50 epochs
+
+Changes in iteration 5
+ - Fucntions moved from main file to separate file
+ - Autoencoder data was modified
+ - Generator layers were modified
+ - Model was modified to be an Unrolled GAN
+
 """
+
+
 
 import numpy as np
 import tensorflow as tf
