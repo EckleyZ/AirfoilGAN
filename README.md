@@ -20,3 +20,8 @@ Markup :    - I dont know why this wont work its kinda frustrating
 - Changing the loss function of the discriminator to a wasseerstein loss function
 - Improving the results from the AE through the use of a contractive AE or denoising AE
 - Modifying how the dataset is being broken into chunks and fed to the AE and GAN
+
+Markup : * Bullet list
+              * Nested bullet
+                  * Sub-nested bullet etc
+          * Bullet list item 2
