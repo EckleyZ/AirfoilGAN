@@ -9,7 +9,7 @@ Using this dataset each airfoil was analyzed at a large range of reynolds number
 
 At this point in time there are a handful of issues:            
             
-Markup:
+Markup :    - I dont know why this wont work its kinda frustrating
             - Quality of AE is poor due to the large amount of input data and small output dimension
             - Mode collapse is present in the generator 
             - Spikes appear in the loss curve
