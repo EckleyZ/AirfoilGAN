@@ -9,10 +9,10 @@ Using this dataset each airfoil was analyzed at a large range of reynolds number
 
 At this point in time there are a handful of issues:            
             
-Markup : - I dont know why this wont work its kinda frustrating
-         - Quality of AE is poor due to the large amount of input data and small output dimension
-         - Mode collapse is present in the generator 
-         - Spikes appear in the loss curve
+Markup :    - I dont know why this wont work its kinda frustrating
+            - Quality of AE is poor due to the large amount of input data and small output dimension
+            - Mode collapse is present in the generator 
+            - Spikes appear in the loss curve
 - Due to the mode collapse when the generator swtiches from one local solution to another there is a large increase in the loss as the generator transitions
 - The spikes could also be due to a small batch size, a common problem with SGD where a batch has low diversity and results in a strange gradient
 - Steps are being taken to remove the spikes and reduce mode collapse in the model
