@@ -11,6 +11,6 @@ At this point in time there are a handful of issues:
  - Quality of autoencoder is poor due to the large amount of input data and small output dimension
  - Small amount of mode collapse from the generator
  - Spikes appear in the loss curve during training:
-  - The belief for right now is that because of the mode collapse in the generator it is switching between local solutions and causing large spikes in loss during the transition 
+ - The belief for right now is that because of the mode collapse in the generator it is switching between local solutions and causing large spikes in loss during the transition 
   - The spikes could also be due to a small batch size
   - Steps are being taken to remove these spikes in the loss curve
