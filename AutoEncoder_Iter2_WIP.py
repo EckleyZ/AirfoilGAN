@@ -204,8 +204,19 @@ def grad(model,inputs):
 
 #%% Train the model with x_test as input and the target output
 
-#function to pull random chunk of data and reorganize it
-def makeInput(AirfoilNum,bSz,)
+''' 
+# Reorganize data set into chunks rather than huge 10 layer sheets
+NewData = np.zeros((110,202,1584*11))
+ReNum = np.linspace(np.zeros((1,10)),np.ones((1,10)),11,axis=1).reshape((110,1),order='F')
+DataTypes = list(range(1,10))
+for a in range(1584):
+    for c in range(0,11):
+        ind = c*11
+        Chunk = Data[a,ind:ind+11,:,:]
+        Stacked = vstack((np.split(Chunk,DataTypes,axis=2))).reshape(110,201)
+        ReCol = ReNum*1.5e6+1e6+(c*1.5e6)
+        NewData[:,:,11*a+c] = hstack((ReCol,Stacked))
+'''
 
 optimizer = tf.optimizers.Adam(learning_rate=0.1)
 global_step = tf.Variable(0)
