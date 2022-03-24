@@ -89,36 +89,53 @@ class Autoencoder(Model):
   def __init__(self, latent_dim):
     super(Autoencoder, self).__init__()
     self.latent_dim = latent_dim
-    F = [16, 64, 256, 1024]
+    F = [16, 32, 32, 64, 64, 128, 128, 256]
     #F = F[::-1]
     
     #================ ENCODER ================
     self.encoder = Sequential()
     
     # Input layer
-    self.encoder.add(InputLayer(input_shape=(121, 201, 10, 1)))
+    self.encoder.add(InputLayer(input_shape=(22,202,7)))
     
-    # Convolution 1 ---- (None,121,201,10,1) --> (None,121,100,F[0])
-    self.encoder.add(Conv3D(F[0],(1,1,10),(1,1,1),activation='sigmoid',padding='valid'))
-    self.encoder.add(Reshape([121,201,F[0]]))
+    # ~~~~~ Convolution 1 ~~~~~
+    # Trim --- (None,110,202) --> (None,107,199)
+    self.encoder.add(Conv2D(F[0],(4,4),(1,1),activation='sigmoid',padding='valid'))
+    #self.encoder.add(LeakyReLU(alpha=0.2))
+    self.encoder.add(BatchNormalization(axis=-1))
+    # Cut ---- (None,107,199) --> (None,105,99)
+    self.encoder.add(Conv2D(F[1],(3,3),(1,2),activation='sigmoid',padding='valid'))
     #self.encoder.add(LeakyReLU(alpha=0.2))
     self.encoder.add(BatchNormalization(axis=-1))
     
-    
-    # Convolution 2 ---- (None,121,201,F[0]) --> (None,41,34,F[1])
-    self.encoder.add(Conv2D(F[1],(5,9),(3,5),activation='sigmoid',padding='same'))
+    # ~~~~~ Convolution 2 ~~~~~
+    # Trim --- (None,105,99) ---> (None,103,97)
+    self.encoder.add(Conv2D(F[2],(3,3),(1,1),activation='sigmoid',padding='valid'))
     #self.encoder.add(LeakyReLU(alpha=0.2))
     self.encoder.add(BatchNormalization(axis=-1))
-    
-    
-    # Convolution 3 ---- (None,41,34,F[1]) --> (None,21,12,F[2])
-    self.encoder.add(Conv2D(F[2],(3,3),(2,2),activation='sigmoid',padding='same'))
-    #self.encoder.add(LeakyReLU(alpha=0.2))
-    self.encoder.add(BatchNormalization(axis=-1))
-    
-    
-    # Convolution 4 ---- (None,21,12,F[2]) --> (None,10,10,F[3])
+    # Cut ---- (None,103,97) ---> (None,51,48)
     self.encoder.add(Conv2D(F[3],(3,3),(2,2),activation='sigmoid',padding='valid'))
+    #self.encoder.add(LeakyReLU(alpha=0.2))
+    self.encoder.add(BatchNormalization(axis=-1))
+    
+    # ~~~~~ Convolution 3 ~~~~~
+    # Trim --- (None,51,48) ----> (None,49,47)
+    self.encoder.add(Conv2D(F[4],(3,2),(1,1),activation='sigmoid',padding='valid'))
+    #self.encoder.add(LeakyReLU(alpha=0.2))
+    self.encoder.add(BatchNormalization(axis=-1))
+    # Cut ---- (None,49,47) ---> (None,24,23)
+    self.encoder.add(Conv2D(F[5],(3,3),(2,2),activation='sigmoid',padding='valid'))
+    #self.encoder.add(LeakyReLU(alpha=0.2))
+    self.encoder.add(BatchNormalization(axis=-1))
+    
+    # ~~~~~ Convolution 4 ~~~~~
+    # Trim --- (None,24,23) ----> (None,22,22)
+    self.encoder.add(Conv2D(F[6],(3,2),(1,1),activation='sigmoid',padding='valid'))
+    #self.encoder.add(LeakyReLU(alpha=0.2))
+    self.encoder.add(BatchNormalization(axis=-1))
+    # Cut ---- (None,22,22) ---> (None,10,10)
+    self.encoder.add(Conv2D(F[7],(4,4),(2,2),activation='sigmoid',padding='valid'))
+    #self.encoder.add(LeakyReLU(alpha=0.2))
     self.encoder.add(BatchNormalization(axis=-1))
     
     
@@ -132,38 +149,58 @@ class Autoencoder(Model):
     
     # Input layer
     self.decoder.add(InputLayer(input_shape=(100,)))
-    self.decoder.add(Dense(F[3]*outShape))
-    self.decoder.add(Reshape([10,10,F[3]]))
+    self.decoder.add(Dense(F[7]*outShape))
+    self.decoder.add(Reshape([10,10,F[7]]))
     
-    # Deconvolution 2 ---- (None,10,10,64) --> (None,21,12,32)
+    # ~~~~~ Deconvolution 1 ~~~~~
+    # Upsample --- (None,10,10) ---> (None,22,22)
+    self.decoder.add(Conv2DTranspose(F[6],(4,4),(2,2),activation='sigmoid',padding='valid'))
+    #self.decoder.add(LeakyReLU(alpha=0.2))
+    self.decoder.add(BatchNormalization(axis=-1))
+    # Padding ---- (None,22,22) ---> (None,24,23)
+    self.decoder.add(Conv2DTranspose(F[5],(3,2),(1,1),activation='sigmoid',padding='valid'))
+    #self.decoder.add(LeakyReLU(alpha=0.2))
+    self.decoder.add(BatchNormalization(axis=-1))
+    
+    # ~~~~~ Deconvolution 2 ~~~~~
+    # Upsample --- (None,24,23) ---> (None,49,47)
+    self.decoder.add(Conv2DTranspose(F[4],(3,3),(2,2),activation='sigmoid',padding='valid'))
+    #self.decoder.add(LeakyReLU(alpha=0.2))
+    self.decoder.add(BatchNormalization(axis=-1))
+    # Padding ---- (None,49,47) ---> (None,51,48)
+    self.decoder.add(Conv2DTranspose(F[3],(3,2),(1,1),activation='sigmoid',padding='valid'))
+    #self.decoder.add(LeakyReLU(alpha=0.2))
+    self.decoder.add(BatchNormalization(axis=-1))
+    
+    # ~~~~~ Deconvolution 3 ~~~~~
+    # Upsample --- (None,51,48) ---> (None,103,97)
     self.decoder.add(Conv2DTranspose(F[2],(3,3),(2,2),activation='sigmoid',padding='valid'))
     #self.decoder.add(LeakyReLU(alpha=0.2))
     self.decoder.add(BatchNormalization(axis=-1))
-    
-    
-    # Deconvolution 3 ---- (None,21,12,32) --> (None,41,34,16)
-    self.decoder.add(Conv2DTranspose(F[1],(3,3),(2,2),activation='sigmoid',padding='same',output_padding=(0,0)))
+    # Padding ---- (None,103,97) --> (None,105,99)
+    self.decoder.add(Conv2DTranspose(F[1],(3,3),(1,1),activation='sigmoid',padding='valid'))
     #self.decoder.add(LeakyReLU(alpha=0.2))
     self.decoder.add(BatchNormalization(axis=-1))
     
-    # Deconvolution 4 ---- (None,41,34,16) --> (None,121,201,8)
-    self.decoder.add(Conv2DTranspose(F[0],(5,9),(3,5),activation='sigmoid',padding='same',output_padding=(0,0)))
-    self.decoder.add(Reshape([121,201,F[0]]))
+    # ~~~~~ Deconvolution 4 ~~~~~
+    # Upsample --- (None,105,99) ---> (None,107,199)
+    self.decoder.add(Conv2DTranspose(F[0],(3,3),(1,2),activation='sigmoid',padding='valid'))
     #self.decoder.add(LeakyReLU(alpha=0.2))
     self.decoder.add(BatchNormalization(axis=-1))
-    
-    # Deconvolution 5 ---- (None,121,100,8) --> (None,121,201,10,1)
-    self.decoder.add(Reshape([121,201,1,F[0]]))
-    self.decoder.add(Conv3DTranspose(1,(1,1,10),(1,1,1),activation='sigmoid',padding='valid'))
+    # Padding ---- (None,107,199) --> (None,110,202)
+    self.decoder.add(Conv2DTranspose(1,(4,4),(1,1),activation='sigmoid',padding='valid'))
     
 
   def call(self, x):
-      #x_flat = (x.numpy()).flatten()
       encoded = self.encoder(x)
       decoded = self.decoder(encoded)
-      return decoded, encoded
+      return decoded#, encoded
 
+# compile the model, MSE is the standard loss function for autoencoders
 AE = Autoencoder(latent_dim)
+AE.compile(optimizer='adam', loss=losses.MeanSquaredError())
+AE.encoder.summary()
+AE.decoder.summary()
 
 #%% Define loss function and gradient function
 
