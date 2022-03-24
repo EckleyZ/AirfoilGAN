@@ -81,6 +81,28 @@ print (P_test.shape)
 num = np.array(list(range(1584))).reshape(int(1584/sets),sets)
 num = num[:,0:sets-1].reshape(num.size,1)
 
+#%% Reorganize data set into chunks rather than huge 10 layer sheets
+rows = 77
+NewData = np.zeros((1584*11,rows,202))
+ReNum = np.linspace(np.zeros((1,7)),np.ones((1,7)),11,axis=1).reshape((rows,1),order='F')
+DataTypes = list(range(1,7))
+for a in range(1584):
+    for c in range(0,10):
+        ind = c*11
+        Chunk = P_data[a,ind:ind+11,:,:]
+        Stacked = np.vstack((np.split(Chunk,DataTypes,axis=2))).reshape(rows,201)
+        ReCol = ReNum*1.5+1+(c*1.5) #in millions 
+        NewData[11*a+c,:,:] = np.hstack((ReCol,Stacked))
+
+NewData = NewData.reshape(NewData.shape[0],NewData.shape[1],NewData.shape[2],1)
+
+del P_data
+
+IndexNums = list(range(NewData.shape[0]))
+TrainData = NewData[IndexNums[0:1584*7]]
+TestData = NewData[IndexNums[1584*7:1584*11]]
+del NewData
+
 
 #%% autoencoder
 latent_dim = 64 
